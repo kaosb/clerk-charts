@@ -1,0 +1,24 @@
+{
+  "name": "clerk-charts",
+  "homepage": "https://github.com/kaosb/clerk-charts",
+  "authors": [
+    "Basilio Cáceres <basilio.caceres@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "globalize": "^1.1.1",
+    "accounting": "^0.3.2",
+    "d3": "^3.5.17",
+    "moment": "momentjs#^2.13.0"
+  }
+}
