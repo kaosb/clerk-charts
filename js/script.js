@@ -374,7 +374,7 @@ CHARTS = (function(obj){
 	obj.Sales.prototype.parse = function(){
 		var ranges = [],
 			values = [];
-		this.data.ranges.forEach( function(d){
+		this.data.data.forEach( function(d){
 			ranges.push( obj.helpers.parseDate( d.date ) );
 			values.push( d.value );
 		});
