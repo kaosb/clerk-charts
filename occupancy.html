@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Ocupación</title>
+	<script src="bower_components/d3/d3.min.js" charset="utf-8"></script>
+	<script src="bower_components/accounting/accounting.min.js"></script>
+	<script src="bower_components/moment/min/moment-with-locales.min.js"></script>
+	<script src="js/currency_formats.js"></script>
+	<script src="js/script.js"></script>
+	<link rel="stylesheet" href="css/style.css">
+	<script>
+		var data = {
+			'range' : 'week', // month, 3month
+			'data' : [
+				{
+					'date' : '2016-05-01',
+					'value' : 21,
+					'percent' : 44,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-02',
+					'value' : 12,
+					'percent' : 24,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-03',
+					'value' : 3,
+					'percent' : 5,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-04',
+					'value' : 4,
+					'percent' : 10,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-05',
+					'value' : 45,
+					'percent' : 89,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-06',
+					'value' : 56,
+					'percent' : 98,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-07',
+					'value' : 17,
+					'percent' : 30,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-08',
+					'value' : 8,
+					'percent' : 15,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-09',
+					'value' : 19,
+					'percent' : 28,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-10',
+					'value' : 10,
+					'percent' : 20,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-11',
+					'value' : 21,
+					'percent' : 33,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-12',
+					'value' : 12,
+					'percent' : 20,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-13',
+					'value' : 33,
+					'percent' : 56,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-14',
+					'value' : 34,
+					'percent' : 58,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-15',
+					'value' : 5,
+					'percent' : 8,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-16',
+					'value' : 6,
+					'percent' : 10,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-17',
+					'value' : 17,
+					'percent' : 28,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-18',
+					'value' : 28,
+					'percent' : 46,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-19',
+					'value' : 9,
+					'percent' : 18,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-20',
+					'value' : 0,
+					'percent' : 0,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-21',
+					'value' : 1,
+					'percent' : 2,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-22',
+					'value' : 42,
+					'percent' : 86,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-23',
+					'value' : 23,
+					'percent' : 42,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-24',
+					'value' : 34,
+					'percent' : 58,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-25',
+					'value' : 35,
+					'percent' : 60,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-26',
+					'value' : 2,
+					'percent' : 4,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-27',
+					'value' : 4,
+					'percent' : 8,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-28',
+					'value' : 8,
+					'percent' : 16,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-29',
+					'value' : 19,
+					'percent' : 33,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-30',
+					'value' : 10,
+					'percent' : 18,
+					'bloqued' : 0
+				},
+				{
+					'date' : '2016-05-31',
+					'value' : 30,
+					'percent' : 50,
+					'bloqued' : 0
+				}
+			]
+		};
+	</script>
+</head>
+<body class="occupancy">
+	<script type="text/javascript">
+		var chart = new CHARTS.Occupancy(data);
+	</script>
+</body>
+</html>

@@ -3,8 +3,9 @@ var CHARTS = (function(){
 
 	// Gráfico Base
 	obj.Line = function (data) {
-		this.data       = data;
-		this.ranges     = [];
+		this.data       = data.data;
+		this.dataX      = [];
+		this.dataY      = [];
 		this.values     = [];
 		this.minFormat  = null;
 		this.maxFormat  = null;
@@ -41,26 +42,26 @@ var CHARTS = (function(){
 
 		// Funciones básicas
 		var maxY = function () {
-			return d3.max( _this.values, function (d) {
+			return d3.max( _this.dataY, function (d) {
 				return +d;
 			});
 		};
 		var minY = function () {
-			return d3.min( _this.values, function (d) {
+			return d3.min( _this.dataY, function (d) {
 				return +d;
 			});
 		};
 		// Escala la posición de los elementos
 		var scaleX = d3.scale.ordinal()
 			.rangePoints([0, insideWidth])
-			.domain( _this.ranges.map( function(d, i) { return d; }));
+			.domain( _this.dataX.map( function(d, i) { return d; }));
 		var scaleY = d3.scale.linear()
 			.domain([0, maxY()])
 			.rangeRound([insideHeight, 0]);
 		// Calcula la distancia de los elementos en X
 		var calcScaleX = d3.scale.ordinal()
 			.rangePoints([0, insideWidth])
-			.domain( _this.ranges.map( function(d, i) { return i; }));
+			.domain( _this.dataX.map( function(d, i) { return i; }));
 
 		// Contruir eje X
 		var makeAxisX = function (){
@@ -75,7 +76,7 @@ var CHARTS = (function(){
 				.orient("left");
 		};
 		// Line breaks
-		var insertLinebreaks = function (d) {
+		var insertLinebreaks = function () {
 			var el = d3.select(this);
 			var words = el.text().split(' ');
 			el.text('');
@@ -88,7 +89,7 @@ var CHARTS = (function(){
 
 		var lineCoordinates = function () {
 			var coordinates = [], i = 0;
-			_this.values.forEach( function (d) {
+			_this.dataY.forEach( function (d) {
 				coordinates[i] = {
 					'x' : calcScaleX(i),
 					'y' : scaleY(d)
@@ -128,7 +129,7 @@ var CHARTS = (function(){
 					return false;
 				// Si esta permitida, se calcula el rango seleccionado
 				var leftEdges   = calcScaleX.range(),
-					rangeWidth  = ( insideWidth / _this.ranges.length ) / 2,
+					rangeWidth  = ( insideWidth / _this.dataX.length ) / 2,
 					index;
 				for ( index = 0; xPosition > ( leftEdges[index] + rangeWidth ); index++ ) {}
 				return index;
@@ -147,7 +148,7 @@ var CHARTS = (function(){
 					.style('display', 'inherit')
 					.attr('transform', 'translate(' + ( calcScaleX( selected ) + margin.left ) + ' ' + margin.top + ')');
 				// Mover el punto dentro del foco
-				focusPoint.attr('transform', 'translate(-10 ' + ( scaleY( _this.values[selected] ) - 10 ) + ')');
+				focusPoint.attr('transform', 'translate(-10 ' + ( scaleY( _this.dataY[selected] ) - 10 ) + ')');
 			},
 			move : function () {
 				var selected = userActions._getSelectedRange(this);
@@ -156,7 +157,7 @@ var CHARTS = (function(){
 				// Mover el foco
 				focus.attr('transform', 'translate(' + ( calcScaleX( selected ) + margin.left ) + ' ' + margin.top + ')');
 				// Mover el punto dentro del foco
-				focusPoint.attr('transform', 'translate(-10 ' + ( scaleY( _this.values[selected] ) - 10 ) + ')');
+				focusPoint.attr('transform', 'translate(-10 ' + ( scaleY( _this.dataY[selected] ) - 10 ) + ')');
 			},
 			end : function(){
 				// Ocultar el foco
@@ -194,7 +195,7 @@ var CHARTS = (function(){
 			.append('g')
 			.classed('graph-dots', true)
 				.selectAll('g')
-				.data(_this.values)
+				.data(_this.data)
 				.enter()
 				.append('g')
 					.classed('graph-dot-group', true)
@@ -204,7 +205,7 @@ var CHARTS = (function(){
 					.append('circle')
 						.attr('cx', 0)
 						.attr('cy', function (d){
-							return scaleY(d);
+							return scaleY(d.value);
 						})
 						.attr('r', 4);
 
@@ -258,38 +259,30 @@ var CHARTS = (function(){
 		var minValue = d3.select(
 				d3.selectAll('.graph-dot-group')
 					.filter( function (d, i) {
-						return d === minY();
+						return d.value === minY();
 					})[0].shift()
 			)
 			.append('text')
 				.classed('min-value', true)
-				.text( function(d){
-					return _this.minFormat(d);
+				.each( _this.minFormat )
+				.attr('dy', function (d) {
+					return ( scaleY(d.value) + 25 );
 				})
-				.attr('x', function(){
-					return ( this.getBoundingClientRect().width / 2 ) * -1;
-				})
-				.attr('y', function (d){
-					return scaleY(d) + 30;
-				});
+				.attr('text-anchor', 'middle');
 
 		var maxValue = d3.select(
 				d3.selectAll('.graph-dot-group')
 					.filter( function (d, i) {
-						return d === maxY();
+						return d.value === maxY();
 					})[0].pop()
 			)
 			.append('text')
 				.classed('max-value', true)
-				.text( function(d){
-					return _this.maxFormat(d);
+				.each( _this.maxFormat )
+				.attr('dy', function (d) {
+					return ( scaleY(d.value) - 15 );
 				})
-				.attr('x', function(){
-					return ( this.getBoundingClientRect().width / 2 ) * -1;
-				})
-				.attr('y', function (d){
-					return scaleY(d) - 20;
-				});
+				.attr('text-anchor', 'middle');
 
 		var focus = svg.append('g')
 			.classed('focus', true)
@@ -352,16 +345,21 @@ var CHARTS = (function(){
 CHARTS = (function(obj){
 	// Gráfico de Ventas
 	obj.Sales = function (data) {
+		var _this = this;
 		// Se llama al constructor padre, estableciendo this para las llamadas
 		obj.Line.call(this, data);
 		// La propiedad 'currency' sólo esta presente en este gráfico
 		this.currency   = data.currency;
 		// Formatos
-		this.minFormat  = function (d) {
-			return obj.helpers.formatCurrency( this.currency, d );
+		this.minFormat  = function () {
+			var el   = d3.select(this),
+				data = el.datum();
+			el.text( obj.helpers.formatCurrency( _this.currency, data.value ) );
 		};
-		this.maxFormat  = function (d) {
-			return obj.helpers.formatCurrency( this.currency, d );
+		this.maxFormat  = function () {
+			var el   = d3.select(this),
+				data = el.datum();
+			el.text( obj.helpers.formatCurrency( _this.currency, data.value ) );
 		};
 		// Parse data
 		this.parse();
@@ -372,14 +370,14 @@ CHARTS = (function(obj){
 
 	// Para procesar los datos enviados y definir los valores predeterminados
 	obj.Sales.prototype.parse = function(){
-		var ranges = [],
-			values = [];
-		this.data.data.forEach( function(d){
-			ranges.push( obj.helpers.parseDate( d.date ) );
-			values.push( d.value );
+		var dataX = [],
+			dataY = [];
+		this.data.forEach( function(d){
+			dataX.push( obj.helpers.parseDate( d.date ) );
+			dataY.push( d.value );
 		});
-		this.ranges = ranges;
-		this.values = values;
+		this.dataX = dataX;
+		this.dataY = dataY;
 	};
 	return obj;
 }(CHARTS));
@@ -388,22 +386,45 @@ CHARTS = (function(obj){
 	obj.Occupancy = function (data) {
 		// Se llama al constructor padre, estableciendo this para las llamadas
 		obj.Line.call(this, data);
+		// Formatos
+		this.minFormat  = function () {
+			var el   = d3.select(this),
+				data = el.datum();
+			el.append('tspan')
+				.text(data.percent + '% (' + data.value + ')');
+			el.append('tspan')
+				.text(data.bloqued + ' bloqueadas')
+				.attr('x', 0)
+				.attr('dy', 16)
+				.classed('label-bloqued', true);
+		};
+		this.maxFormat  = function () {
+			var el   = d3.select(this),
+				data = el.datum();
+			el.attr('transform', 'translate(0 -15)');
+			el.append('tspan')
+				.text(data.percent + '% (' + data.value + ')');
+			el.append('tspan')
+				.text(data.bloqued + ' bloqueadas')
+				.attr('x', 0 )
+				.attr('dy', 16)
+				.classed('label-bloqued', true);
+		};
 		// Se parsea la información enviada
-		this.parse(data);
+		this.parse();
 	};
 	// Se crea el Object Occupancy, heredando los prototipos de Line
 	obj.Occupancy.prototype = Object.create( obj.Line.prototype );
 	// Para procesar los datos enviados y definir los valores predeterminados
 	obj.Occupancy.prototype.parse = function(){
-		this.minFormat  = function (d) {
-			return d.value + '% ()' + d.rooms + '' ;
-		};
-		this.maxFormat  = function (value) {
-			return d.value + '% ()' + d.rooms + '' ;
-		};
-		// Se calcular los valores de ranges y values
-		this.ranges     = [];
-		this.values     = [];
+		var dataX = [],
+			dataY = [];
+		this.data.forEach( function(d){
+			dataX.push( obj.helpers.parseDate( d.date ) );
+			dataY.push( d.value );
+		});
+		this.dataX = dataX;
+		this.dataY = dataY;
 	};
 	return obj;
 }(CHARTS));
