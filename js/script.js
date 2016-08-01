@@ -4,6 +4,7 @@ var CHARTS = (function(){
 	// Gráfico Base
 	obj.Line = function (data) {
 		this.data       = data.data;
+		this.range      = data.range;
 		this.dataX      = [];
 		this.dataY      = [];
 		this.values     = [];
@@ -40,6 +41,18 @@ var CHARTS = (function(){
 			insideWidth     = width - ( margin.left + margin.right ),
 			insideHeight    = height - ( margin.top + margin.bottom );
 
+
+		if ( _this.range === 'month' ) {
+			var _days = _this.dataX.length === ( 28 || 29 ) ?
+				[ 0, 4, 8, 12, 16, 20, 24, ( _this.dataX.length - 1 ) ] :
+				[ 0, 5, 10, 15, 20, 25, ( _this.dataX.length - 1 ) ] ;
+			_days.forEach( function( i ){
+				labels.push( _this.dataX[ i ] );
+			});
+		} else {
+			labels = _this.dataX;
+		}
+
 		// Funciones básicas
 		var maxY = function () {
 			return d3.max( _this.dataY, function (d) {
@@ -54,7 +67,7 @@ var CHARTS = (function(){
 		// Escala la posición de los elementos
 		var scaleX = d3.scale.ordinal()
 			.rangePoints([0, insideWidth])
-			.domain( _this.dataX.map( function(d, i) { return d; }));
+			.domain( labels.map( function(d, i) { return d; }));
 		var scaleY = d3.scale.linear()
 			.domain([0, maxY()])
 			.rangeRound([insideHeight, 0]);
@@ -83,7 +96,7 @@ var CHARTS = (function(){
 			for (var i = 0; i < words.length; i++) {
 				var tspan = el.append('tspan')
 					.text(words[i]);
-				if ( i > 0 ) tspan.attr('x', 0).attr('dy', 20);
+				if ( i > 0 ) tspan.attr('x', 0).attr('dy', 17);
 			}
 		};
 
@@ -417,8 +430,8 @@ CHARTS = (function(obj){
 	obj.Occupancy.prototype = Object.create( obj.Line.prototype );
 	// Para procesar los datos enviados y definir los valores predeterminados
 	obj.Occupancy.prototype.parse = function(){
-		var dataX = [],
-			dataY = [];
+		var dataX    = [],
+			dataY    = [];
 		this.data.forEach( function(d){
 			dataX.push( obj.helpers.parseDate( d.date ) );
 			dataY.push( d.value );

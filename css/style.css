@@ -63,7 +63,7 @@ circle {
     shape-rendering: crispEdges;
 }
 .axis-x text {
-	font-size: 16px;
+	font-size: 14px;
 }
 text {
 	font-family: 'sf-ui-text';
