@@ -33,7 +33,7 @@ var CHARTS = (function(){
 			labels          = [],
 			overFormat      = null,
 			// Configuración visual del gráfico; podrían ser editables
-			margin          = { top : 130, right : 50, bottom : 130, left : 50 },
+			margin          = { top : 90, right : 50, bottom : 90, left : 50 },
 			ticksY          = 3,
 			// Variables locales, no cambian nunca
 			width           = document.body.clientWidth,
@@ -96,7 +96,7 @@ var CHARTS = (function(){
 			for (var i = 0; i < words.length; i++) {
 				var tspan = el.append('tspan')
 					.text(words[i]);
-				if ( i > 0 ) tspan.attr('x', 0).attr('dy', 17);
+				if ( i > 0 ) tspan.attr('x', 0).attr('dy', 15);
 			}
 		};
 
@@ -241,7 +241,7 @@ var CHARTS = (function(){
 			.classed('axis-x', true)
 			.attr('transform', function (d) {
 				var height = svg.node().getBoundingClientRect().height;
-				return 'translate(' + margin.left + ' ' + ( height - 50 ) + ')';
+				return 'translate(' + margin.left + ' ' + ( height - 38 ) + ')';
 			});
 
 		var axisXRanges = axisX
