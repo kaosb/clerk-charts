@@ -63,14 +63,14 @@ circle {
     shape-rendering: crispEdges;
 }
 .axis-x text {
-	font-size: 14px;
+	font-size: 12px;
 }
 text {
 	font-family: 'sf-ui-text';
 	font-style: normal;
-	font-size: 14px;
+	font-size: 12px;
 	fill: #fff;
 }
 .label-bloqued {
-	font-size: 12px;
+	font-size: 11px;
 }
