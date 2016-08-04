@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Ventas</title>
+	<script src="bower_components/d3/d3.min.js"></script>
+	<script src="bower_components/accounting/accounting.min.js"></script>
+	<script src="bower_components/moment/min/moment-with-locales.min.js"></script>
+	<script src="bower_components/moment/locale/es.js"></script>
+	<script src="js/currency_formats.js"></script>
+	<script src="js/script.js"></script>
+	<link rel="stylesheet" href="css/style.css">
+	<script>
+		var data = {
+			'datetime' : '2016-08-24 12:30:00',
+			'description' : 'Datos hasta el medio día',
+			'occupancy' : 76,
+			'rooms_total' : 240,
+			'rooms_occupied' : 100,
+			'rooms_bloqued' : 2
+		};
+	</script>
+</head>
+<body class="status">
+	<script type="text/javascript">
+		var chart = new CHARTS.Status(data);
+	</script>
+</body>
+</html>

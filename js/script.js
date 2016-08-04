@@ -1,7 +1,7 @@
 var CHARTS = (function(){
 	var obj = {};
 
-	// Gráfico Base
+	// Gráfico de Línea (Ventas - Ocupación)
 	obj.Line = function (data) {
 		this.data       = data.data;
 		this.range      = data.range;
@@ -11,7 +11,6 @@ var CHARTS = (function(){
 		this.minFormat  = null;
 		this.maxFormat  = null;
 		this.container  = null;
-
 		var obj = this;
 		// Se genera al cargar el contenido
 		document.addEventListener('DOMContentLoaded', function(){
@@ -21,12 +20,10 @@ var CHARTS = (function(){
 			obj.delete().build();
 		});
 	};
-
 	obj.Line.prototype.delete = function () {
 		this.container.remove();
 		return this;
 	};
-
 	obj.Line.prototype.build = function () {
 		// Valores computados a partir de data
 		var _this           = this,
@@ -335,10 +332,155 @@ var CHARTS = (function(){
 			.on('touchend',   userActions.end );
 	};
 
+	// Gráfico cicular (Status)
+	obj.Status = function (data) {
+		// data
+		this.datetime        = data.datetime;
+		this.description     = data.description;
+		this.occupancy       = data.occupancy;
+		this.roomsTotal      = data.rooms_total;
+		this.roomsOccupied   = data.rooms_occupied;
+		this.roomsBloqued    = data.rooms_bloqued;
+		// objeto principal
+		this.container       = null;
+
+		var obj = this;
+		// Se genera al cargar el contenido
+		document.addEventListener('DOMContentLoaded', function(){
+			obj.build();
+		});
+		window.addEventListener('resize', function(){
+			obj.delete().build();
+		});
+	};
+	obj.Status.prototype.delete = function () {
+		this.container.remove();
+		return this;
+	};
+	obj.Status.prototype.build = function () {
+		var _this           = this,
+			margin          = { top : 55, right : 0, bottom : 55, left : 0 },
+			width           = document.body.clientWidth,
+			height          = document.body.clientHeight,
+			insideWidth     = width - ( margin.left + margin.right ),
+			insideHeight    = height - ( margin.top + margin.bottom ),
+			degrees         = ( _this.occupancy * 360 ) / 100,
+			outerRadius     = insideWidth >= insideHeight ? insideHeight / 2 : insideWidth / 2,
+			innerRadius     = outerRadius / 1.45,
+			startAngle      = 0;
+
+		// permitirá mover cada línea 1º, para obedecer al diseño
+		function rangeByTwo(i) {
+			return i ? rangeByTwo(i-2).concat(i) : [];
+		}
+
+		this.container = d3.select('body')
+			.append('div')
+				.classed('svg-container', true);
+
+		// SVG
+		var svg = this.container
+			.append('svg')
+				.attr('preserveAspectRatio', 'xMinYMin meet')
+				.attr('viewBox', '0 0 ' + width + ' ' + height )
+				.classed('svg-content-responsive', true);
+
+		var group = svg
+			.append('g')
+				.classed('degrees', true)
+				.attr('width', outerRadius)
+				.attr('height', outerRadius)
+				.attr('transform', function(){
+					return 'translate(' + ( ( width - this.getBoundingClientRect().width ) / 2 ) + ', ' + ( outerRadius + margin.top ) + ')';
+				});
+
+		var arc = d3.svg.arc();
+		var paths = group.selectAll('path')
+			.data( rangeByTwo(360) )
+			.enter()
+			.append('path')
+				.attr('class', function (d) {
+					return d <= degrees ? 'line-degree' : 'line-degree-empty';
+				})
+				.attr('d', function (d) {
+					return arc({
+						innerRadius : innerRadius,
+						outerRadius : outerRadius,
+						startAngle : d * ( Math.PI / 180 ),
+						endAngle : ( d + 1 ) * ( Math.PI / 180 )
+					});
+				});
+
+		// Ocupación
+		var occupancy = svg
+			.append('text')
+				.classed('status-main', true)
+				.attr('text-anchor', 'middle');
+
+		var percent = occupancy
+			.append('tspan')
+				.classed('status-percent', true)
+				.attr('style', function(){
+					return 'font-size: ' + group[0][0].getBoundingClientRect().width / 5;
+				})
+				.text(_this.occupancy + '%');
+
+		var percentLabel = occupancy
+			.append('tspan')
+				.classed('status-percent-label', true)
+					.attr('style', function(){
+						return 'font-size: ' + group[0][0].getBoundingClientRect().width / 12;
+					})
+					.attr('x', 0)
+					.attr('dy', group[0][0].getBoundingClientRect().width / 10)
+					.text('ocupación');
+
+		occupancy
+			.attr('transform', function(){
+				var groupWidth   = group[0][0].getBoundingClientRect().width,
+					groupHeight  = group[0][0].getBoundingClientRect().height,
+					elWidth      = this.getBoundingClientRect().width,
+					elHeight     = this.getBoundingClientRect().height,
+					elTop        = ( height - groupHeight ) / 2 + ( groupHeight - elHeight ) / 1.3,
+					elLeft       = ( width - groupWidth ) / 2  + ( groupWidth - elWidth );
+				return 'translate(' + elLeft + ', ' + elTop + ')';
+			});
+
+		// Header
+		var header = this.container
+			.append('header')
+				.classed('status-header', true);
+		// Footer
+		var footer = this.container
+			.append('footer')
+				.classed('status-footer', true)
+				.attr('style', 'top: ' + ( group[0][0].getBoundingClientRect().width + margin.top + 10 ) + 'px' );
+
+		// Fecha
+		header.append('h2')
+			.attr('id', 'status-date')
+			.text( obj.helpers.formatDate( _this.datetime ) );
+		// Description
+		header.append('h3')
+			.attr('id', 'status-description')
+			.text( _this.description );
+		// Ocupadas
+		footer.append('p')
+			.attr('id', 'status-occupied')
+			.text( _this.roomsOccupied + ' / ' + _this.roomsTotal + ' habitaciones ocupadas' );
+		// Bloqueadas
+		footer.append('p')
+			.attr('id', 'status-bloqued')
+			.text( _this.roomsBloqued + ' habitaciones bloqueadas' );
+	};
+
 	obj.helpers = {
 		parseDate : function (date) {
 			var dateFormat = d3.time.format("%Y-%m-%d");
 			return dateFormat.parse(date);
+		},
+		formatDate : function (date) {
+			return moment(date).format('DD MMMM YYYY | h:mm') + ' hrs';
 		},
 		formatCurrency : function (currency, value) {
 			var data = CURRENCY_FORMATS[ currency ];

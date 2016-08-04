@@ -24,13 +24,18 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 html, body {
 	width: 100%;
 	height: 100%;
+	font-family: 'sf-ui-text';
+	line-height: 1.4;
 	overflow: hidden;
 }
 body.sales {
-	background-image: radial-gradient(40% 40%, #6ac36e, #388e3c);
+	background-image: radial-gradient(40% 40%, #6AC36E, #388E3C);
 }
 body.occupancy {
-	background-image: radial-gradient(40% 40%,#35b3f4,#007abe);
+	background-image: radial-gradient(40% 40%, #35B3F4, #007ABE);
+}
+body.status {
+	background-image: radial-gradient(40% 40%, #FF752B, #F44913);
 }
 .svg-container {
 	display: inline-block;
@@ -46,8 +51,12 @@ body.occupancy {
 	top: 0;
 	left: 0;
 }
-circle {
+circle,
+.line-degree {
 	fill: #fff;
+}
+.line-degree-empty {
+	fill: rgba(255, 255, 255, .25);
 }
 .area {
 	fill: rgba(255, 255, 255, .5);
@@ -73,4 +82,23 @@ text {
 }
 .label-bloqued {
 	font-size: 11px;
+}
+.status-percent-label {
+	text-transform: uppercase;
+}
+.status-header,
+.status-footer {
+	display: block;
+	font-size: 11px;
+	text-align: center;
+	color: #fff;
+}
+.status-header {
+	margin-top: 15px;
+	text-transform: uppercase;
+}
+.status-footer {
+	position: absolute;
+	left: 0;
+	right: 0;
 }

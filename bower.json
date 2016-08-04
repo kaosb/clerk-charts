@@ -18,7 +18,7 @@
   "dependencies": {
     "globalize": "^1.1.1",
     "accounting": "^0.3.2",
-    "d3": "^3.5.17",
-    "moment": "momentjs#^2.13.0"
+    "moment": "momentjs#^2.13.0",
+    "d3": "^3.5.17"
   }
 }
