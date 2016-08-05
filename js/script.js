@@ -30,7 +30,7 @@ var CHARTS = (function(){
 			labels          = [],
 			overFormat      = null,
 			// Configuración visual del gráfico; podrían ser editables
-			margin          = { top : 90, right : 50, bottom : 90, left : 50 },
+			margin          = { top : 70, right : 50, bottom : 45, left : 50 },
 			ticksY          = 3,
 			// Variables locales, no cambian nunca
 			width           = document.body.clientWidth,
@@ -57,9 +57,10 @@ var CHARTS = (function(){
 			});
 		};
 		var minY = function () {
-			return d3.min( _this.dataY, function (d) {
-				return +d;
-			});
+			// return d3.min( _this.dataY, function (d) {
+			// 	return +d;
+			// });
+			return 0;
 		};
 		// Escala la posición de los elementos
 		var scaleX = d3.scale.ordinal()
@@ -93,7 +94,7 @@ var CHARTS = (function(){
 			for (var i = 0; i < words.length; i++) {
 				var tspan = el.append('tspan')
 					.text(words[i]);
-				if ( i > 0 ) tspan.attr('x', 0).attr('dy', 15);
+				if ( i > 0 ) tspan.attr('x', 0).attr('dy', 14);
 			}
 		};
 
@@ -149,7 +150,7 @@ var CHARTS = (function(){
 				if ( selected === false )
 					return false;
 				// Opacidad en gráfico
-				minValue.call( effects.opacity, 0 );
+				// minValue.call( effects.opacity, 0 );
 				maxValue.call( effects.opacity, 0 );
 				graphDots.call( effects.opacity, '.5' );
 				graphLine.call( effects.opacity, '.5' );
@@ -173,7 +174,7 @@ var CHARTS = (function(){
 				// Ocultar el foco
 				focus.style('display', 'none');
 				// Opacidad en gráfico
-				minValue.call( effects.opacity, 1 );
+				// minValue.call( effects.opacity, 1 );
 				maxValue.call( effects.opacity, 1 );
 				graphDots.call( effects.opacity, 1 );
 				graphLine.call( effects.opacity, 1 );
@@ -238,7 +239,7 @@ var CHARTS = (function(){
 			.classed('axis-x', true)
 			.attr('transform', function (d) {
 				var height = svg.node().getBoundingClientRect().height;
-				return 'translate(' + margin.left + ' ' + ( height - 38 ) + ')';
+				return 'translate(' + margin.left + ' ' + ( height - 30 ) + ')';
 			});
 
 		var axisXRanges = axisX
@@ -266,19 +267,19 @@ var CHARTS = (function(){
 				.tickFormat('')
 			);
 
-		var minValue = d3.select(
-				d3.selectAll('.graph-dot-group')
-					.filter( function (d, i) {
-						return d.value === minY();
-					})[0].shift()
-			)
-			.append('text')
-				.classed('min-value', true)
-				.each( _this.minFormat )
-				.attr('dy', function (d) {
-					return ( scaleY(d.value) + 25 );
-				})
-				.attr('text-anchor', 'middle');
+		// var minValue = d3.select(
+		// 		d3.selectAll('.graph-dot-group')
+		// 			.filter( function (d, i) {
+		// 				return d.value === minY();
+		// 			})[0].shift()
+		// 	)
+		// 	.append('text')
+		// 		.classed('min-value', true)
+		// 		.each( _this.minFormat )
+		// 		.attr('dy', function (d) {
+		// 			return ( scaleY(d.value) - 28 );
+		// 		})
+		// 		.attr('text-anchor', 'middle');
 
 		var maxValue = d3.select(
 				d3.selectAll('.graph-dot-group')
@@ -454,7 +455,7 @@ var CHARTS = (function(){
 		var footer = this.container
 			.append('footer')
 				.classed('status-footer', true)
-				.attr('style', 'top: ' + ( group[0][0].getBoundingClientRect().width + margin.top + 10 ) + 'px' );
+				.attr('style', 'top: ' + ( group[0][0].getBoundingClientRect().width + margin.top + 12 ) + 'px' );
 
 		// Fecha
 		header.append('h2')
@@ -550,7 +551,7 @@ CHARTS = (function(obj){
 			el.append('tspan')
 				.text(data.bloqued + ' bloqueadas')
 				.attr('x', 0)
-				.attr('dy', 16)
+				.attr('dy', 14)
 				.classed('label-bloqued', true);
 		};
 		this.maxFormat  = function () {
@@ -562,7 +563,7 @@ CHARTS = (function(obj){
 			el.append('tspan')
 				.text(data.bloqued + ' bloqueadas')
 				.attr('x', 0 )
-				.attr('dy', 16)
+				.attr('dy', 14)
 				.classed('label-bloqued', true);
 		};
 		// Se parsea la información enviada
