@@ -30,7 +30,7 @@ var CHARTS = (function(){
 			labels          = [],
 			overFormat      = null,
 			// Configuración visual del gráfico; podrían ser editables
-			margin          = { top : 55, right : 30, bottom : 40, left : 30 },
+			margin          = { top : 55, right : 40, bottom : 40, left : 40 },
 			ticksY          = 3,
 			// Variables locales, no cambian nunca
 			width           = document.body.clientWidth,
