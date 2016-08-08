@@ -37,6 +37,9 @@ body.occupancy {
 body.status {
 	background-image: radial-gradient(40% 40%, #FF752B, #F44913);
 }
+.hidden {
+	display: none;
+}
 .svg-container {
 	display: inline-block;
 	position: relative;
@@ -101,4 +104,21 @@ text {
 	position: absolute;
 	left: 0;
 	right: 0;
+}
+.summary {
+	width: 250px;
+	margin: 6px auto;
+	line-height: 95%;
+	text-align: center;
+	color: #fff;
+}
+.summary-date {
+	font-size: 10px;
+	text-transform: uppercase;
+}
+.summary-title {
+	font-size: 14px;
+}
+.summary-bloqued {
+	font-size: 11px;
 }

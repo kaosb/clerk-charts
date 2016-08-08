@@ -30,7 +30,7 @@ var CHARTS = (function(){
 			labels          = [],
 			overFormat      = null,
 			// Configuración visual del gráfico; podrían ser editables
-			margin          = { top : 70, right : 30, bottom : 45, left : 30 },
+			margin          = { top : 55, right : 30, bottom : 40, left : 30 },
 			ticksY          = 3,
 			// Variables locales, no cambian nunca
 			width           = document.body.clientWidth,
@@ -160,6 +160,10 @@ var CHARTS = (function(){
 					.attr('transform', 'translate(' + ( calcScaleX( selected ) + margin.left ) + ' ' + margin.top + ')');
 				// Mover el punto dentro del foco
 				focusPoint.attr('transform', 'translate(-10 ' + ( scaleY( _this.dataY[selected] ) - 10 ) + ')');
+				// Mostrará el bloque de resumen del rango seleccionado
+				summary
+					.call( _this.updateSummary, _this.data[selected] )
+					.call( effects.opacity, '1' );
 			},
 			move : function () {
 				var selected = userActions._getSelectedRange(this);
@@ -169,15 +173,21 @@ var CHARTS = (function(){
 				focus.attr('transform', 'translate(' + ( calcScaleX( selected ) + margin.left ) + ' ' + margin.top + ')');
 				// Mover el punto dentro del foco
 				focusPoint.attr('transform', 'translate(-10 ' + ( scaleY( _this.dataY[selected] ) - 10 ) + ')');
+				// Mostrará el bloque de resumen del rango seleccionado
+				summary.call( _this.updateSummary, _this.data[selected] );
 			},
-			end : function(){
+			end : function () {
 				// Ocultar el foco
-				focus.style('display', 'none');
+				focus
+					.call( effects.opacity, '.5' )
+					.style('display', 'none');
 				// Opacidad en gráfico
 				// minValue.call( effects.opacity, 1 );
 				maxValue.call( effects.opacity, 1 );
 				graphDots.call( effects.opacity, 1 );
 				graphLine.call( effects.opacity, 1 );
+				// Esconder elemento
+				summary.call( effects.opacity, '0' );
 			}
 		};
 
@@ -187,6 +197,7 @@ var CHARTS = (function(){
 			.y( function (d){ return d.y; } )
 			.interpolate("linear");
 
+		// Elementos
 		this.container = d3.select('body')
 			.append('div')
 				.classed('svg-container', true);
@@ -196,6 +207,12 @@ var CHARTS = (function(){
 				.attr('preserveAspectRatio', 'xMinYMin meet')
 				.attr('viewBox', '0 0 ' + width + ' ' + height )
 				.classed('svg-content-responsive', true);
+
+		var summary = this.container
+			.append('header')
+				.classed('summary', true)
+				.call( effects.opacity, 0 )
+				.each( _this.createSummary );
 
 		var graph = svg
 			.append('g')
@@ -314,7 +331,7 @@ var CHARTS = (function(){
 				.classed('focus-point', true)
 				.attr('cx', 10)
 				.attr('cy', 10)
-				.attr('r', 10)
+				.attr('r', 7)
 				.attr('transform', 'translate(-10 0)')
 				.attr('fill', '#fff');
 
@@ -481,7 +498,16 @@ var CHARTS = (function(){
 			return dateFormat.parse(date);
 		},
 		formatDate : function (date) {
+			moment.locale('es');
 			return moment(date).format('DD MMMM YYYY | h:mm') + ' hrs';
+		},
+		formatDay : function (date) {
+			moment.locale('es');
+			return moment(date).format('DD MMMM YYYY');
+		},
+		formatMonth : function (date) {
+			moment.locale('es');
+			return moment(date).format('MMMM YYYY');
 		},
 		formatCurrency : function (currency, value) {
 			var data = CURRENCY_FORMATS[ currency ];
@@ -517,6 +543,22 @@ CHARTS = (function(obj){
 				data = el.datum();
 			el.text( obj.helpers.formatCurrency( _this.currency, data.value ) );
 		};
+		this.createSummary = function () {
+			var el   = d3.select(this);
+			el.append('p')
+				.classed('summary-date', true);
+			el.append('h2')
+				.classed('summary-title', true);
+		};
+		this.updateSummary = function (el, selected) {
+			var date       = _this.range === 'week' || _this.range === 'month' ?
+								obj.helpers.formatDay( selected.date ) :
+								obj.helpers.formatMonth( selected.date ),
+				sales      = obj.helpers.formatCurrency( _this.currency, selected.value );
+			// Inserción de textos
+			d3.select('.summary-date').text(date);
+			d3.select('.summary-title').text(sales);
+		};
 		// Parse data
 		this.parse();
 	};
@@ -540,6 +582,7 @@ CHARTS = (function(obj){
 
 CHARTS = (function(obj){
 	obj.Occupancy = function (data) {
+		var _this = this;
 		// Se llama al constructor padre, estableciendo this para las llamadas
 		obj.Line.call(this, data);
 		// Formatos
@@ -565,6 +608,26 @@ CHARTS = (function(obj){
 				.attr('x', 0 )
 				.attr('dy', 14)
 				.classed('label-bloqued', true);
+		};
+		this.createSummary = function () {
+			var el   = d3.select(this);
+			el.append('p')
+				.classed('summary-date', true);
+			el.append('h2')
+				.classed('summary-title', true);
+			el.append('h3')
+				.classed('summary-bloqued', true);
+		};
+		this.updateSummary = function (el, selected) {
+			var date       = _this.range === 'week' || _this.range === 'month' ?
+								obj.helpers.formatDay( selected.date ) :
+								obj.helpers.formatMonth( selected.date ),
+				occupancy  = selected.percent + '% (' + selected.value + ' habitaciones)',
+				bloqued    = selected.bloqued + ' bloqueadas';
+			// Inserción de textos
+			d3.select('.summary-date').text(date);
+			d3.select('.summary-title').text(occupancy);
+			d3.select('.summary-bloqued').text(bloqued);
 		};
 		// Se parsea la información enviada
 		this.parse();
